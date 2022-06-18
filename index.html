@@ -150,7 +150,7 @@
 				}
 
 				bgImage.src = imageURL.replace('<number_of_image>', numberOfImage_str);
-				bgImage.onload = ()=>{
+				bg.image.onload = ()=>{
 				bg.render();
 			}
 			}
@@ -176,10 +176,9 @@
 			});
 
 
-			bgImage.onload = ()=>{
+			bg.image.onload = ()=>{
 				bg.context.scale(window.innerWidth/bgImage.width, window.innerHeight/bgImage.height);
 				bg.render();
-				
 			}
 
 			var exScrollValue = 0;
