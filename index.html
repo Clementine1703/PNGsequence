@@ -19,6 +19,7 @@
 
 		.preloader{
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			position: fixed;
@@ -42,8 +43,8 @@
 </head>
 <body>
 	<div class="preloader" id="preloader">
-		<div><p style="font-size: 30px;">Загрузка...</p></div>
-		<div>{{ downloadImages }}/{{ allImages }}</div>
+		<div><p style="font-size: 30px;">Загрузка...</p></div><br>
+		<div>{{ downloadedImages }}/{{ allImages }}</div>
 	</div>
 
 	<div class="background">
@@ -84,6 +85,7 @@
 					console.log(countOfImages);
 					if (preloadImagesCounter < countOfImages){
 						preloadImagesCounter++;
+						preloader_app?preloader_app.downloadedImages = preloadImagesCounter:null;
 					}
 					else {
 						deletePreloader();
@@ -203,10 +205,10 @@
 		})
 
 
-		const app = new Vue({
+		const preloader_app = new Vue({
 		  				el: '#preloader',
 		  				data: {
-			 				downloadImages: preloadImagesCounter,
+			 				downloadedImages: preloadImagesCounter,
 			 				allImages: countOfImages,
 		  				},
 				})
