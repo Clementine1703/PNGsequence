@@ -56,24 +56,38 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	
 	<script type="text/javascript">
-		document.addEventListener('DOMContentLoaded', ()=>{
-
-			
+		$(window).on('load', function() {
 			function deletePreloader(){
 				var preloader = document.querySelector(".preloader");
 				preloader.parentNode.removeChild(preloader);
 			}
+
+			deletePreloader();
+		})
+
+		document.addEventListener('DOMContentLoaded', ()=>{
+
+			
+
+			function sleep(milliseconds) {
+  			const date = Date.now();
+  			let currentDate = null;
+  			do {
+    		currentDate = Date.now();
+  			} while (currentDate - date < milliseconds);
+			}
+
 
 
 
 			$.fn.preload = function() {
     			this.each(function(){
         		$('<img/>')[0].src = this;
+				preloadImagesCounter++;
     			});
 				}
 
 			function preload() {
-				const countOfImages = 179;
 				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
 				let preload_list = [];
     			for (let i = 0; i < countOfImages; i++){
@@ -86,7 +100,6 @@
 					let preload_src = imageURL.replace('<number_of_image>', replace_value_str);
 					preload_list.push(preload_src);
 				}
-				console.log(preload_list);
 				$(preload_list).preload();
 			}
 
@@ -125,7 +138,12 @@
 
 
 			preload();
-			deletePreloader();
+
+
+			// deletePreloader();
+
+			var preloadImagesCounter = 0;
+			var countOfImages = 179;
 
 			var bgImage = new Image();
 			bgImage.src = "bg_images/babina30fps_jpeg_v3000.jpg";
