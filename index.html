@@ -149,7 +149,7 @@
 					numberOfImage_str = '0' + numberOfImage_str;
 				}
 
-				bgImage.src = imageURL.replace('<number_of_image>', numberOfImage_str);
+				bg.image.src = imageURL.replace('<number_of_image>', numberOfImage_str);
 				bg.image.onload = ()=>{
 				bg.render();
 			}
