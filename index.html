@@ -56,63 +56,68 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	
 	<script type="text/javascript">
-		$(window).on('load', function() {
+
+				let preloadImagesCounter = 0;
+				const countOfImages = 179;
+				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
+
+		document.addEventListener('DOMContentLoaded', ()=>{
+
+
+			// ф-я, которая удаляет preloader
 			function deletePreloader(){
 				var preloader = document.querySelector(".preloader");
 				preloader.parentNode.removeChild(preloader);
 			}
 
-			deletePreloader();
-		})
-
-		document.addEventListener('DOMContentLoaded', ()=>{
-
-			
-
-			function sleep(milliseconds) {
-  			const date = Date.now();
-  			let currentDate = null;
-  			do {
-    		currentDate = Date.now();
-  			} while (currentDate - date < milliseconds);
+			// ф-я предзагрузки всех изображений фона (удаляет preloader после того как все изображения загружены)
+			function preload(arrayOfImages) {
+				let preloadImagesCounter = 1;
+    			$(arrayOfImages).each(function(){
+				let photo = new Image();
+        		photo.src = this;
+				photo.onload = ()=>{
+					console.log(preloadImagesCounter);
+					console.log(countOfImages);
+					if (preloadImagesCounter < countOfImages){
+						preloadImagesCounter++;
+					}
+					else {
+						deletePreloader();
+						return 0;
+					}
+					
+				}
+    			});
 			}
 
-
-
-
-			$.fn.preload = function() {
-    			this.each(function(){
-        		$('<img/>')[0].src = this;
-				preloadImagesCounter++;
-    			});
-				}
-
-			function preload() {
-				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
+			// формирует список с url изображений для их дальнейшей предзагрузки. Работает
+			// с константой imageSRC и подставляет вместо заглушки число от 0 до количества изображений
+			function createPreloaderList() {
 				let preload_list = [];
     			for (let i = 0; i < countOfImages; i++){
 					let replace_value = i;
 					let replace_value_str = replace_value.toString();
 					for (let k = 0; k < countOfImages.toString().length - replace_value.toString().length; k++){
 					replace_value_str = '0' + replace_value_str;
-					console.log(replace_value_str);
 					}
 					let preload_src = imageURL.replace('<number_of_image>', replace_value_str);
 					preload_list.push(preload_src);
 				}
-				$(preload_list).preload();
+				return preload_list;
+				
 			}
 
+
+			// ф-я создающая объект для работы с анимацией
 			function sprite (options) {
-				
 				var that = {};
-							  
 				that.context = options.context;
 				that.width = options.width;
 				that.height = options.height;
 				that.image = options.image;
-		  
 				
+				// ф-я отрисовывает новое фото фона
 				that.render = function () {
 
 				that.context.clearRect(0, 0, canvas.width, canvas.height);
@@ -133,17 +138,26 @@
 				return that;
 			}
 
+			// ф-я, которая меняет задний фон в зависимости от прокрутки страницы
+			function changeImage(){
+				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/179)));
+				numberOfImage_str = numberOfImage.toString();
+				for (let i = 0; i < 3 - numberOfImage.length; i++){
+					numberOfImage_str = '0' + numberOfImage_str;
+				}
+
+
+				bgImage.src = imageURL.replace('<number_of_image>', numberOfImage_str);
+				bgImage.onload = ()=>{
+				bg.render();
+			}
+			}
 
 
 
 
-			preload();
 
-
-			// deletePreloader();
-
-			var preloadImagesCounter = 0;
-			var countOfImages = 179;
+			preload(createPreloaderList());
 
 			var bgImage = new Image();
 			bgImage.src = "bg_images/babina30fps_jpeg_v3000.jpg";
@@ -160,22 +174,6 @@
 			});
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			bgImage.onload = ()=>{
 				bg.context.scale(window.innerWidth/bgImage.width, window.innerHeight/bgImage.height);
 				bg.render();
@@ -185,15 +183,6 @@
 			var exScrollValue = 0;
 
 
-
-
-
-
-
-
-
-
-			
 
 			window.addEventListener('wheel', ()=>{
 				if (exScrollValue != Math.floor(window.scrollY)){
@@ -208,44 +197,6 @@
 					exScrollValue = Math.floor(window.scrollY);
 				}
 			}, 50)
-			
-
-
-
-			function changeImage(){
-				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/179)));
-				for (let i = 0; i < 3 - numberOfImage.length; i++){
-					numberOfImage = '0' + numberOfImage;
-				}
-
-				bgImage.src = `bg_images/babina30fps_jpeg_v3${numberOfImage}.jpg`;
-				bgImage.onload = ()=>{
-				bg.render();
-			}
-			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			
-
-
-			
-
 		})
 	</script>
 </body>
