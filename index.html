@@ -81,8 +81,6 @@
 				let photo = new Image();
         		photo.src = this;
 				photo.onload = ()=>{
-					console.log(preloadImagesCounter);
-					console.log(countOfImages);
 					if (preloadImagesCounter < countOfImages){
 						preloadImagesCounter++;
 						preloader_app?preloader_app.downloadedImages = preloadImagesCounter:null;
@@ -146,11 +144,10 @@
 			// ф-я, которая меняет задний фон в зависимости от прокрутки страницы
 			function changeImage(){
 				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/179)));
-				numberOfImage_str = numberOfImage.toString();
-				for (let i = 0; i < countOfImages.length - numberOfImage.length; i++){
+				numberOfImage_str = numberOfImage
+				for (let i = 0; i < String(countOfImages).length - numberOfImage.length; i++){
 					numberOfImage_str = '0' + numberOfImage_str;
 				}
-
 
 				bgImage.src = imageURL.replace('<number_of_image>', numberOfImage_str);
 				bgImage.onload = ()=>{
