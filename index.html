@@ -17,6 +17,7 @@
 
 		html, body {
 			scroll-behavior: smooth;
+			height: 100%;
 		}
 
 		/* @media (prefers-redused-motion: reduce){
@@ -127,7 +128,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
 
-	
+
 	<script type="text/javascript">
 
 				const countOfImages = 179;
@@ -222,6 +223,20 @@
 				return that;
 			}
 
+			function check_changes(){
+				if (exScrollValue != Math.floor(window.scrollY)){
+					changeImage();
+					exScrollValue = Math.floor(window.scrollY);
+				}
+
+				if (contentBlock.getBoundingClientRect().top <= 0){
+					canvas_conteiner.classList.add('hidden');
+				}
+				else {
+					canvas_conteiner.classList.remove('hidden');
+				}
+			}
+
 			// ф-я, которая меняет задний фон в зависимости от прокрутки страницы
 			function changeImage(){
 				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/countOfImages)));
@@ -255,21 +270,12 @@
 
 			bg.image.onload = ()=>{
 				bg.render();
+				check_changes()
 			}
 
 			let exScrollValue = 0;
 			window.addEventListener('scroll', ()=>{
-				if (exScrollValue != Math.floor(window.scrollY)){
-					changeImage();
-					exScrollValue = Math.floor(window.scrollY);
-				}
-
-				if (contentBlock.getBoundingClientRect().top <= 0){
-					canvas_conteiner.classList.add('hidden');
-				}
-				else {
-					canvas_conteiner.classList.remove('hidden');
-				}
+				check_changes();
 			})
 
 			window.addEventListener('resize', ()=>{
@@ -320,5 +326,6 @@
 				})
 
 	</script>
+
 </body>
 </html>
