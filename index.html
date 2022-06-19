@@ -63,16 +63,47 @@
 
 				const countOfImages = 179;
 				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
+				const start_animation_stop_kadr = 76;
+				let context_scalled = false;
 				let preloadImagesCounter = 1;
+				let delayOn = false;
 
 
 		document.addEventListener('DOMContentLoaded', ()=>{
+
+			deletePreloader();
+
+			// фуекция задержки
+			function sleep(milliseconds) {
+  				const date = Date.now();
+  				let currentDate = null;
+  				do {
+    				currentDate = Date.now();
+  				} while (currentDate - date < milliseconds);
+}
 
 
 			// ф-я, которая удаляет preloader
 			function deletePreloader(){
 				var preloader = document.querySelector(".preloader");
 				preloader.parentNode.removeChild(preloader);
+			}
+
+			function start_animation(images){
+				for (let i = 1; i < images; i++){
+					let replace_value = i;
+					let replace_value_str = replace_value.toString();
+					for (let k = 0; k < countOfImages.toString().length - replace_value.toString().length; k++){
+					replace_value_str = '0' + replace_value_str;
+					};
+					bg.image.src = imageURL.replace('<number_of_image>', replace_value_str);
+					console.log(bg.image.src);
+					bg.render();
+					
+					
+					
+					
+				};
 			}
 
 			// ф-я предзагрузки всех изображений фона (удаляет preloader после того как все изображения загружены)
@@ -86,7 +117,8 @@
 						preloader_app?preloader_app.downloadedImages = preloadImagesCounter:null;
 					}
 					else {
-						deletePreloader();
+						// deletePreloader();
+						start_animation(start_animation_stop_kadr);
 						return 0;
 					}
 					
@@ -126,6 +158,8 @@
 				that.context.clearRect(0, 0, canvas.width, canvas.height);
 
 				// Draw the animation
+				let scaleW = that.width/window.innerWidth;
+				let scaleY = that.height/window.innerHeight;
 				that.context.drawImage(
 					that.image,
 					0,
@@ -134,8 +168,8 @@
 					that.height,
 					0,
 					0,
-					that.width,
-					that.height);
+					that.width/scaleW,
+					that.height/scaleY);
 				};
 				
 				return that;
@@ -163,6 +197,7 @@
 
 			var bgImage = new Image();
 			bgImage.src = "bg_images/babina30fps_jpeg_v3000.jpg";
+			
 
 			var canvas = document.getElementById("bgAnimation");
 			canvas.width = innerWidth;
@@ -177,8 +212,8 @@
 
 
 			bg.image.onload = ()=>{
-				bg.context.scale(window.innerWidth/bgImage.width, window.innerHeight/bgImage.height);
 				bg.render();
+				
 			}
 
 			var exScrollValue = 0;
