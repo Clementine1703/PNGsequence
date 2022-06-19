@@ -12,6 +12,16 @@
 			box-sizing: border-box;
 		}
 
+		html, body {
+			scroll-behavior: smooth;
+		}
+
+		/* @media (prefers-redused-motion: reduce){
+			html, body {
+			scroll-behavior: auto;
+		}
+		} */
+
 		body{
 			width: 100%;
 			min-height: 100vh;
@@ -29,6 +39,24 @@
 			background-color: white;
 		}
 
+		.site-content{
+			position: absolute;
+			width: 100%;
+			top: 350vh;
+			z-index: -1;
+		}
+
+		.block{
+			width: 100%;
+			height: 100vh;
+			border: 10px solid black;
+		}
+
+		.video-slide1 video{
+			width: 100vw;
+			height: 100vh;
+		}
+
 		.background{
 			position: fixed;
 			width: 100%;
@@ -39,6 +67,11 @@
 			width: 100%;
 			height: 450vh;
 		}
+
+		.hidden{
+			display: none;
+		}
+
 	</style>
 </head>
 <body>
@@ -46,13 +79,20 @@
 		<div><p style="font-size: 30px;">Загрузка...</p></div><br>
 		<div>{{ downloadedImages }}/{{ allImages }}</div>
 	</div>
+	
 
 	<div class="background">
 		<canvas id="bgAnimation" ></canvas>
 	</div>
 
 	<div class="container">
-
+		<div class="site-content">
+			<div class="block block1"></div>
+			<div class="block block2"></div>
+			<div class="block block3"></div>
+			<div class="block block4"></div>
+			<div class="block block5"></div>
+		</div>
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -63,25 +103,14 @@
 
 				const countOfImages = 179;
 				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
-				const start_animation_stop_kadr = 76;
-				let context_scalled = false;
+				// let context_scalled = false;
 				let preloadImagesCounter = 1;
-				let delayOn = false;
+				let context_visible = true;
+				let contentBlock = document.querySelector('.site-content');
+				let canvas_conteiner = document.querySelector('.background')
 
 
 		document.addEventListener('DOMContentLoaded', ()=>{
-
-			deletePreloader();
-
-			// фуекция задержки
-			function sleep(milliseconds) {
-  				const date = Date.now();
-  				let currentDate = null;
-  				do {
-    				currentDate = Date.now();
-  				} while (currentDate - date < milliseconds);
-}
-
 
 			// ф-я, которая удаляет preloader
 			function deletePreloader(){
@@ -89,24 +118,8 @@
 				preloader.parentNode.removeChild(preloader);
 			}
 
-			function start_animation(images){
-				for (let i = 1; i < images; i++){
-					let replace_value = i;
-					let replace_value_str = replace_value.toString();
-					for (let k = 0; k < countOfImages.toString().length - replace_value.toString().length; k++){
-					replace_value_str = '0' + replace_value_str;
-					};
-					bg.image.src = imageURL.replace('<number_of_image>', replace_value_str);
-					console.log(bg.image.src);
-					bg.render();
-					
-					
-					
-					
-				};
-			}
 
-			// ф-я предзагрузки всех изображений фона (удаляет preloader после того как все изображения загружены)
+			// ф-я предзагрузки всех изображений фона (удаляет preloader после того как все изображения загружены) и запускает основную анимацию
 			function preload(arrayOfImages) {
     			$(arrayOfImages).each(function(){
 				let photo = new Image();
@@ -117,8 +130,8 @@
 						preloader_app?preloader_app.downloadedImages = preloadImagesCounter:null;
 					}
 					else {
-						// deletePreloader();
-						start_animation(start_animation_stop_kadr);
+						deletePreloader();
+						main();
 						return 0;
 					}
 					
@@ -144,6 +157,10 @@
 			}
 
 
+			preload(createPreloaderList());
+
+
+			function main(){
 			// ф-я создающая объект для работы с анимацией
 			function sprite (options) {
 				var that = {};
@@ -177,7 +194,7 @@
 
 			// ф-я, которая меняет задний фон в зависимости от прокрутки страницы
 			function changeImage(){
-				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/179)));
+				let numberOfImage = String(Math.floor(window.scrollY/((document.body.scrollHeight - window.innerHeight)/countOfImages)));
 				numberOfImage_str = numberOfImage
 				for (let i = 0; i < String(countOfImages).length - numberOfImage.length; i++){
 					numberOfImage_str = '0' + numberOfImage_str;
@@ -189,11 +206,6 @@
 			}
 			}
 
-
-
-
-
-			preload(createPreloaderList());
 
 			var bgImage = new Image();
 			bgImage.src = "bg_images/babina30fps_jpeg_v3000.jpg";
@@ -213,27 +225,60 @@
 
 			bg.image.onload = ()=>{
 				bg.render();
-				
 			}
 
-			var exScrollValue = 0;
-
-
-
-			window.addEventListener('wheel', ()=>{
+			let exScrollValue = 0;
+			window.addEventListener('scroll', ()=>{
 				if (exScrollValue != Math.floor(window.scrollY)){
 					changeImage();
 					exScrollValue = Math.floor(window.scrollY);
+				}
+
+				if (contentBlock.getBoundingClientRect().top <= 0){
+					canvas_conteiner.classList.add('hidden');
+				}
+				else {
+					canvas_conteiner.classList.remove('hidden');
 				}
 			})
 
-			setInterval(()=>{
-				if (exScrollValue != Math.floor(window.scrollY)){
-					changeImage();
-					exScrollValue = Math.floor(window.scrollY);
-				}
-			}, 50)
+			window.addEventListener('resize', ()=>{
+				changeImage();
+				canvas.width = innerWidth;
+				canvas.height = innerHeight;
+			})
+
+
+
+
+			// window.addEventListener('wheel', ()=>{
+			// 	if (exScrollValue != Math.floor(window.scrollY)){
+			// 		changeImage();
+			// 		exScrollValue = Math.floor(window.scrollY);
+			// 	}
+			// })
+
+			// setInterval(()=>{
+			// 	if (exScrollValue != Math.floor(window.scrollY)){
+			// 		changeImage();
+			// 		exScrollValue = Math.floor(window.scrollY);
+			// 	}
+
+
+
+			// 	if (window.pageYOffset = (document.body.scrollHeight - window.innerHeight)){
+			// 		canvas.classList.add('hidden');
+			// 		console.log('a');
+			// 	}
+			// }, 50)
+
+
+		}
+
+			
 		})
+
+
 
 
 		const preloader_app = new Vue({
