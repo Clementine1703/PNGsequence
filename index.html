@@ -152,6 +152,7 @@
 				let canvas_conteiner = document.querySelector('.background');
 				let video_block1 = document.querySelector('.block1-video');
 				let content_container = document.querySelector('.container');
+				let imagesList = [];
 
 
 		document.addEventListener('DOMContentLoaded', ()=>{
@@ -176,10 +177,12 @@
         		photo.src = this;
 				photo.onload = ()=>{
 					if (preloadImagesCounter < countOfImages){
+						imagesList.push(photo); //для того чтобы фото оставались в памяти
 						preloadImagesCounter++;
 						preloader_app?preloader_app.downloadedImages = preloadImagesCounter:null;
 					}
 					else {
+							console.log(imagesList);
 							deletePreloader();
 							enable_scroll();
 							main();
