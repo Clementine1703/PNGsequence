@@ -10,17 +10,29 @@
 				let video_block1 = document.querySelector('.block1-video');
 				let content_container = document.querySelector('.container');
 				let imagesList = [];
-				const imagesStartsWith = 76;
+				let introImage = document.querySelector('.image-intro');
+				const imagesStartsWith = 70;
 				const imagesEndWith = 179;
 				const countOfImages = imagesEndWith - imagesStartsWith;
 
 
 		document.addEventListener('DOMContentLoaded', ()=>{
 
-			window.scrollTo(0, 0);
+			scroll_to_top();
+
+
+			function scroll_to_top(){
+				$(function() {
+					$('html, body').animate({
+					  scrollTop: 0
+					}, 1);
+				 });
+				 window.scrollTo(0, 0);
+			}
 
 			function enable_scroll(){
 				content_container.classList.remove('disable-scroll');
+				introImage.style.opacity = 0;
 			}
 
 
@@ -80,6 +92,7 @@
 
 
 			function main(){
+
 			// ф-я создающая объект для работы с анимацией
 			function sprite (options) {
 				var that = {};
@@ -138,7 +151,7 @@
 
 
 			var bgImage = new Image();
-			bgImage.src = "bg_images/babina30fps_jpeg_v3000.jpg";
+			bgImage.src = imageURL.replace('<number_of_image>', add_0s_to_start(imagesStartsWith));
 			
 
 			var canvas = document.getElementById("bgAnimation");
@@ -157,6 +170,7 @@
 				bg.render();
 				check_changes()
 			}
+
 
 			let exScrollValue = 0;
 			window.addEventListener('scroll', ()=>{
