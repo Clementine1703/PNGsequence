@@ -98,9 +98,19 @@
 			display: none;
 		}
 
+		.disable-scroll{
+			position: relative;
+			overflow: hidden;
+			height: 100vh;
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+		}
+
 	</style>
 </head>
-<body>
+<body >
 	<div class="preloader" id="preloader">
 		<div><p style="font-size: 30px;">Загрузка...</p></div><br>
 		<div>{{ downloadedImages }}/{{ allImages }}</div>
@@ -111,7 +121,7 @@
 		<canvas id="bgAnimation" ></canvas>
 	</div>
 
-	<div class="container">
+	<div class="container disable-scroll">
 		<div class="site-content">
 			<div class="block block1">
 				<video class="video-block1" autoplay loop muted preload>
@@ -131,6 +141,8 @@
 
 	<script type="text/javascript">
 
+				window.onbeforeunload = function () { window.scrollTo(0, 0); }
+
 				const countOfImages = 179;
 				const imageURL = 'bg_images/babina30fps_jpeg_v3<number_of_image>.jpg';
 				// let context_scalled = false;
@@ -138,10 +150,17 @@
 				let context_visible = true;
 				let contentBlock = document.querySelector('.site-content');
 				let canvas_conteiner = document.querySelector('.background');
-				let video_block1 = document.querySelectorAll('.block1-video');
+				let video_block1 = document.querySelector('.block1-video');
+				let content_container = document.querySelector('.container');
 
 
 		document.addEventListener('DOMContentLoaded', ()=>{
+
+			window.scrollTo(0, 0);
+
+			function enable_scroll(){
+				content_container.classList.remove('disable-scroll');
+			}
 
 			// ф-я, которая удаляет preloader
 			function deletePreloader(){
@@ -162,6 +181,7 @@
 					}
 					else {
 							deletePreloader();
+							enable_scroll();
 							main();
 							return 0;
 					}
