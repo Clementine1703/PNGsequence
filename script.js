@@ -41,7 +41,6 @@
 
 			// ф-я предзагрузки всех изображений фона (удаляет preloader после того как все изображения загружены) и запускает основную анимацию
 			function preload(arrayOfImages) {
-				console.log(arrayOfImages);
     			$(arrayOfImages).each(function(){
 				let photo = new Image();
         		photo.src = this;
